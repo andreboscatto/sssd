@@ -103,7 +103,7 @@ static errno_t get_client_cred(struct cli_ctx *cctx)
     cctx->creds = talloc_zero(cctx, struct cli_creds);
     if (!cctx->creds) return ENOMEM;
 
-    socklen_t client_cred_len = sizeof(struct ucred);
+    socklen_t client_cred_len = sizeof(STRUCT_CRED);
     char proc_path[32];
     char cmd_line[255] = { 0 };
     int proc_fd;
@@ -112,7 +112,7 @@ static errno_t get_client_cred(struct cli_ctx *cctx)
     cctx->creds->ucred.gid = -1;
     cctx->creds->ucred.pid = -1;
 
-    ret = getsockopt(cctx->cfd, SOL_SOCKET, SO_PEERCRED, &cctx->creds->ucred,
+    ret = getsockopt(cctx->cfd, SOL_SOCKET, SSS_PEERCRED_SOCKET_OPTION, &cctx->creds->ucred,
                      &client_cred_len);
     if (ret != EOK) {
         ret = errno;
@@ -120,7 +120,7 @@ static errno_t get_client_cred(struct cli_ctx *cctx)
               "getsockopt failed [%d][%s].\n", ret, strerror(ret));
         return ret;
     }
-    if (client_cred_len != sizeof(struct ucred)) {
+    if (client_cred_len != sizeof(STRUCT_CRED)) {
         DEBUG(SSSDBG_CRIT_FAILURE,
               "getsockopt returned unexpected message size.\n");
         return ENOMSG;

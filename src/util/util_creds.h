@@ -21,6 +21,8 @@
 #ifndef __SSSD_UTIL_CREDS_H__
 #define __SSSD_UTIL_CREDS_H__
 
+#include "shared/cred.h"
+
 /* following code comes from gss-proxy's gp_selinux.h file */
 #ifdef HAVE_SELINUX
 
@@ -63,13 +65,12 @@ typedef void * SEC_CTX;
 
 #endif /* done HAVE_SELINUX */
 
-#include <sys/socket.h>
 struct cli_creds {
-    struct ucred ucred;
+    STRUCT_CRED ucred;
     SELINUX_CTX selinux_ctx;
 };
 
-#define cli_creds_get_uid(x) (x->ucred.uid)
-#define cli_creds_get_gid(x) (x->ucred.gid)
+#define cli_creds_get_uid(x) (CRED_UID(&x->ucred))
+#define cli_creds_get_gid(x) (CRED_UID(&x->ucred))
 
 #endif /* __SSSD_UTIL_CREDS_H__ */
